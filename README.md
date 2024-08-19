@@ -1,3 +1,3 @@
 # EPI590R repo
 
-This repository belongs to Louisa Smith
+This repository belongs to Daniel Herrera
