@@ -57,3 +57,32 @@ tbl_summary(
 	modify_footnote(update = everything() ~ NA) |>
 	modify_header(label = "**Variable**", p.value = "**P**")
 
+# In-class exercise 1.6
+tbl_summary(
+	nlsy,
+	by = sex_cat,
+	include = c(region_cat, race_eth_cat, income,
+							starts_with("sleep")),
+	label = list(
+		region_cat ~ "Region",
+		race_eth_cat ~ "Race/ethnicity",
+		income ~ "Income",
+		sleep_wkdy ~ "Daily sleep hrs",
+		sleep_wknd ~ "Weekend sleep hrs"
+	),
+	statistic = list(income ~ "{p10}, {p90}",
+									 starts_with("sleep") ~ "{min}, {max}"),
+	digits = list(income ~ c(3, 3), starts_with("sleep") ~ c(1, 1)),
+	missing_text = "Missing") |>
+add_p(test = list(all_continuous() ~ "t.test",
+									all_categorical() ~ "chisq.test")) |>
+	add_overall(col_label = "**Total**") |>
+	bold_labels() |>
+	modify_footnote(update = everything() ~ NA) |>
+	#Create Footnote for Race/ethnicity using table styling
+	modify_table_styling(
+		columns = label,
+		rows = label == "Race/ethnicity",
+		footnote = "https://www.nlsinfo.org/content/cohorts/nlsy79/topical-guide/household/race-ethnicity-immigration-data"
+	) |>
+	modify_header(label = "**Variable**", p.value = "**P**")
