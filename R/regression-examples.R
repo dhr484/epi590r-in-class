@@ -95,3 +95,62 @@ tbl_int <- tbl_regression(
 
 tbl_merge(list(tbl_no_int, tbl_int),
 					tab_spanner = c("**Model 1**", "**Model 2**"))
+
+# In-class excercise 1.7.3
+tbl_uvregression(
+	nlsy,
+	x = sex_cat,
+	include = c(nsibs, sleep_wkdy, sleep_wknd, income),
+	method = lm)
+
+# In-class excercise 1.7.4
+poisson_model <- glm(nsibs ~ income + race_eth_cat + sex_cat,
+											data = nlsy, family = poisson())
+
+tbl_regression(
+	poisson_model,
+	exponentiate = TRUE,
+	label = list(income ~ "Income",
+							 race_eth_cat ~ "Race/ethnicity",
+							 sex_cat ~ "Sex")
+	)
+
+# In-class excercise 1.7.5
+logistic_modelrr <- glm(glasses ~ eyesight_cat + sex_cat,
+											data = nlsy,
+											family = binomial(link = "log"))
+
+tbl_regression(
+	logistic_modelrr,
+	exponentiate = TRUE,
+	label = list(eyesight_cat ~ "Eyesight", sex_cat ~ "Sex")
+	)
+
+# In-class excercise 1.7.6
+riskratios_model <- glm(glasses ~ eyesight_cat + sex_cat,
+												data = nlsy,
+												family = poisson())
+
+tbl_regression(
+	riskratios_model,
+	exponentiate = TRUE,
+	label = list(eyesight_cat ~ "Eyesight", sex_cat ~ "Sex"),
+	tidy_fun = partial(tidy_robust, vcov = "HC1")
+)
+
+# In-class excercise 1.7.7
+logbinomial_model <- tbl_regression(
+	logistic_modelrr,
+	exponentiate = TRUE,
+	label = list(eyesight_cat ~ "Eyesight", sex_cat ~ "Sex")
+)
+
+logpoisson_model <- tbl_regression(
+	riskratios_model,
+	exponentiate = TRUE,
+	label = list(eyesight_cat ~ "Eyesight", sex_cat ~ "Sex"),
+	tidy_fun = partial(tidy_robust, vcov = "HC1")
+)
+
+tbl_merge(list(logbinomial_model, logpoisson_model),
+					tab_spanner = c("**Model 1**", "**Model 2**"))
